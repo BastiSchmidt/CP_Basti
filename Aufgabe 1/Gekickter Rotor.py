@@ -1,36 +1,43 @@
 from __future__ import division
-__author__ = 'Basti'
+__author__ = 'Sebastian'
 
-import numpy as np
+from numpy import *
 import matplotlib.pyplot as plt
+
 
 K = 2.6
 
 
 class PSS(object):  # for Phase Space State
     def __init__(self, theta_0, p_0):
-        self.theta[0] = theta_0
-        self.p[0] = p_0
+        self.theta = [theta_0 % (2*pi)]
+        self.p = [(p_0 + pi) % (2*pi) - pi]
 
     def evolve(self):
-        self.theta[len(self.theta)] = (self.theta[len(self.theta) - 1] +\
-          self.p[len(self.p) - 1]) % (2 * np.pi)
-        self.p[len(self.p)] = (self.p[len(self.p) - 1] + K *\
-          np.sin(self.theta[len(self.theta) - 1]) + np.pi) % (2*np.pi) - np.pi
-
-
-"""
-def create_phase_space_diagram(theta_0, p_0):
-    i = 0,
-
-    while i < 1000 :
+        self.theta.append((self.theta[-1] + self.p[-1]) % (2 * pi))
+        self.p.append((self.p[-1] + K * sin(self.theta[-1])+pi) % (2*pi) - pi)
 
 
 def mouse_click(event):
-    create_phase_space_diagram(event.x, event.y)
+    start = PSS(event.xdata, event.ydata)
+    for i in range(1, 1000):
+        start.evolve()
+    plt.plot(start.theta, start.p, '.')
+    plt.draw()
+
+
+fig1 = plt.figure(0)
+plt.subplot(111, aspect=1.0)  #fester quadratischer Plotbereich
+plt.xlim(0, 2*pi)
+plt.ylim(-pi, pi)
+plt.title('gekickter Rotor')
+plt.xlabel('Theta')
+plt.ylabel('p')
+
+plt.connect('button_press_event', mouse_click)  #verbindet Mausklick mit Fkt
+plt.show()
+
+
 """
-
-
-#Main
-Start = PSS(1, 2)
-print len(Start.theta)
+Textgelaber
+"""
