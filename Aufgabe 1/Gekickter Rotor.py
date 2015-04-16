@@ -5,7 +5,7 @@ from numpy import *
 import matplotlib.pyplot as plt
 
 
-K = 2.6
+K = 6.0
 
 
 class PSS(object):  # for Phase Space State
