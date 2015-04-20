@@ -5,10 +5,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def F(x):
-    return x**3
+def f(x):
+    return x**2
 
-def Fprime(x):
+
+def fprime(x):
     return 2*x
 
 
@@ -27,21 +28,27 @@ class Function(object):
                (self.defn(x_0 + h/2) - self.defn(x_0 - h/2)))/(3 * h)
 
 
-f = Function(F)
+F = Function(f)
 
-p = np.linspace(-10, 0, 1000)
-h_list = 10**p
-
+h_list = []
+for p in np.linspace(-10, 0, 11):
+    h_list.append(10**p)
 error_forward = []
 error_central = []
 error_extrapolate = []
-
+fprimelist = []
 
 for z in h_list:
-    error_forward.append(abs(Fprime(z) - f.forward(1/3,z))/Fprime(z))
+    error_central.append(abs(fprime(2) - F.central(2, z)))
+    fprimelist.append(F.central(2, z))
 
-plt.plot(h_list, error_forward, c='k')
+print np.linspace(-10, 0, 11)
+print h_list
+print fprime(2)
+print fprimelist
+print error_central
+
+
+plt.plot(h_list, error_central, c='r', ls='.')
 plt.subplot(111, xscale="log", yscale="log")
-
 plt.show()
-
