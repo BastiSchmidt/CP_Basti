@@ -67,5 +67,24 @@ plt.show()
 
 
 """
-Textgelaber
+Observation Task:
+
+When changing the parameter K to 0.0 all that happens is that you get a normal
+unkicked rotor, whose phase space diagram only consists of straight horizontal
+lines across the torus. When increasing the value for K you can slowly see that
+the phase space is dividing into regular paths and chaotic behavior. Up to
+K = 2.6 you can see very prominent concentric paths around the 'middle'
+(theta = pi, p = 0) of the torus (where the rotor doesn't move at all), which
+represent the rotor 'falling' down a little bit of a round and then getting
+kicked up again. You can also see regular paths showing the 'tipping over' at
+the highest point of the rotor. When further increasing K the regualar islands
+become fewer as the chaotic behavior predominates the phase state. Interesting
+is, that even for K = 6.0 and 6.5 you still can see some regular paths, which
+are totally independent from each other at at different places for different
+K-values.
+
+When zooming into the phase space you see can observe it being very fractal-
+like, as more small regular islands appear next to bigger regular islands. Also
+you can see, that the borders between the chaotic sea an the regular islands
+are very sharp.
 """
