@@ -12,7 +12,7 @@ Umrechnung von Polar- in kartesische Koordinaten:
     y = r * sin(phi)
 """
 
-t = np.arange(0.0, 5.0, 0.01)
+t = np.linspace(0.0, 5.0, 500)
 
 
 def build_plot(x_0, y_0):

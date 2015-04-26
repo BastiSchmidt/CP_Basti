@@ -30,9 +30,7 @@ class Function(object):
 
 F = Function(f)
 
-h_list = []
-for p in np.linspace(-10, 0, 11):
-    h_list.append(10**p)
+h_list = 10**(np.linspace(-10.0, 0.0, 10, endpoint=False))
 error_forward = []
 error_central = []
 error_extrapolate = []
@@ -42,13 +40,15 @@ for z in h_list:
     error_central.append(abs(fprime(2) - F.central(2, z)))
     fprimelist.append(F.central(2, z))
 
-print np.linspace(-10, 0, 11)
+print np.linspace(-10, 0, 10, endpoint=False)
 print h_list
 print fprime(2)
 print fprimelist
 print error_central
 
 
-plt.plot(h_list, error_central, c='r', ls='.')
-plt.subplot(111, xscale="log", yscale="log")
+plt.plot(h_list, error_central, c='r')
+plt.subplot(111, yscale='log', xscale='log')
+plt.xlim(10**(-10), 10**(-1))
+plt.ylim(10**(-18), 10**(-6))
 plt.show()
