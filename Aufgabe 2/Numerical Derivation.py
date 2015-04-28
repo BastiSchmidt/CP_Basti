@@ -6,11 +6,11 @@ import matplotlib.pyplot as plt
 
 
 def f(x):
-    return x**2
+    return np.arctan(x**2)
 
 
 def fprime(x):
-    return 2*x
+    return 2*x/(x**4 + 1)
 
 
 class Function(object):
@@ -24,31 +24,27 @@ class Function(object):
         return (self.defn(x_0 + h/2) - self.defn(x_0 - h/2))/h
 
     def extrapolate(self, x_0, h):
-        return (8 * (self.defn(x_0 + h/4) - self.defn(x_0 - h/4)) -\
+        return (8 * (self.defn(x_0 + h/4) - self.defn(x_0 - h/4)) -
                (self.defn(x_0 + h/2) - self.defn(x_0 - h/2)))/(3 * h)
 
 
 F = Function(f)
 
-h_list = 10**(np.linspace(-10.0, 0.0, 10, endpoint=False))
+h_list = 10**(np.linspace(-10.0, 0.0, 1001))
 error_forward = []
 error_central = []
 error_extrapolate = []
-fprimelist = []
 
 for z in h_list:
-    error_central.append(abs(fprime(2) - F.central(2, z)))
-    fprimelist.append(F.central(2, z))
+    error_forward.append(abs((fprime(1/3) - F.forward(1/3, z))/fprime(1/3)))
+    error_central.append(abs((fprime(1/3) - F.central(1/3, z))/fprime(1/3)))
+    error_extrapolate.append(abs((fprime(1/3) - F.extrapolate(1/3, z))/fprime(1/3)))
 
-print np.linspace(-10, 0, 10, endpoint=False)
-print h_list
-print fprime(2)
-print fprimelist
-print error_central
-
-
-plt.plot(h_list, error_central, c='r')
 plt.subplot(111, yscale='log', xscale='log')
-plt.xlim(10**(-10), 10**(-1))
-plt.ylim(10**(-18), 10**(-6))
+plt.plot(h_list, error_forward, 'r')
+plt.plot(h_list, abs(fprime(1/3) - F.forward(1/3, h_list[-1])) * h_list, 'r--')
+plt.plot(h_list, error_central, 'g')
+plt.plot(h_list, abs(fprime(1/3) - F.central(1/3, h_list[-1])) * h_list**2, 'g--')
+plt.plot(h_list, error_extrapolate, 'b')
+plt.plot(h_list, abs(fprime(1/3) - F.extrapolate(1/3, h_list[-1])) * h_list**4, 'b--')
 plt.show()
