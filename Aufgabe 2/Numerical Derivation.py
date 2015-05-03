@@ -31,7 +31,7 @@ def forward(func, x_0, h):
     genaeherte Ableitung der uebergebenen Funktion an der Stelle x_0 mit der
     Intervallbreite h
     """
-    return (func(x_0 + h) - func(x_0))/h
+    return (func(x_0 + h) - func(x_0)) / h
 
 
 def central(func, x_0, h):
@@ -40,37 +40,40 @@ def central(func, x_0, h):
     genaeherte Ableitung der uebergebenen Funktion an der Stelle x_0 mit der
     Intervallbreite h
     """
-    return (func(x_0 + h/2) - func(x_0 - h/2))/h
+    return (func(x_0 + h/2) - func(x_0 - h/2)) / h
 
 
-def extrapolate(func, x_0, h):
+def extrapl(func, x_0, h):
     """
     Diese Funktion berechnet mittels der extrapolierten Differenzenmethode
     die numerisch genaeherte Ableitung der uebergebenen Funktion an der Stelle
     x_0 mit der Intervallbreite h
     """
     return (8 * (func(x_0 + h/4) - func(x_0 - h/4)) -
-            (func(x_0 + h/2) - func(x_0 - h/2)))/(3 * h)
+            (func(x_0 + h/2) - func(x_0 - h/2))) / (3 * h)
 
-
-X_0 = 1/3
+number = 1001
+    # Anzahl der h-Werte als Parameter
+Global_X_0 = 1/3
     # Zu untersuchender Punkt als Parameter
 
-h_list = 10**(np.linspace(-10.0, 0.0, 1001))
+h_list = (np.logspace(-10.0, 0.0, number))
     # Anlegen eines arrrays von 1^(-10) bis 1 in gleichmaessig logarithmischen
     # Intervallen
 
-error_forward = []
-error_central = []
-error_extrapolate = []
+error_forward = np.zeros(number)
+error_central = np.zeros(number)
+error_extrapl = np.zeros(number)
     # Anlegen der leeren Listen fuer die Fehler der DIfferentiationsverfahren
     # ion Abhaengigkeit der Intervallbreite h
 
-for z in h_list:
-    error_forward.append(abs((fprime(X_0) - forward(f, X_0, z))/fprime(X_0)))
-    error_central.append(abs((fprime(X_0) - central(f, X_0, z))/fprime(X_0)))
-    error_extrapolate.append(abs((fprime(X_0) - extrapolate(f, X_0, z))\
-                                 /fprime(X_0)))
+for z in range(number):
+    error_forward[z] = abs((fprime(Global_X_0) -\
+                       forward(f, Global_X_0, h_list[z])) / fprime(Global_X_0))
+    error_central[z] = abs((fprime(Global_X_0) -\
+                       central(f, Global_X_0, h_list[z])) / fprime(Global_X_0))
+    error_extrapl[z] = abs((fprime(Global_X_0) -\
+                       extrapl(f, Global_X_0, h_list[z])) / fprime(Global_X_0))
     # Befuellen der Fehlerlisten mit dem Betrag des relativen Fehlers der
     # numerischen Methode zum analytisch exakten Ergebnis an der Stelle 1/3
 
@@ -81,21 +84,21 @@ ax = fig.add_subplot(111, yscale='log', xscale='log')
     # Anlegen eines Plotfensters mit logarithmischer Acheneinteilung
 
 ax.plot(h_list, error_forward, 'r', label='Vorwaertsdifferenz')
-ax.plot(h_list, abs(fprime(X_0) - forward(f, X_0, h_list[-1])) * h_list,\
-        'r--', label='erwartetes Verhalten: $O(h)$')
+ax.plot(h_list, abs(fprime(Global_X_0) - forward(f, Global_X_0, h_list[-1])) *\
+        h_list, 'r--', label='erwartetes Verhalten: $O(h)$')
     # Plotten des Fehlers der Vorwaertsmethode und des erwarteten Verhaltens.
     # Fuer letzteres muss, damit der Achsenabschnitt passend auf dem des
     # relativen Fehlers liegt, noch mit dem letzten absoluten Fehler aus der
     # Liste multipliziert werden
 
 ax.plot(h_list, error_central, 'g', label='Zentraldifferenz')
-ax.plot(h_list, abs(fprime(X_0) - central(f, X_0, h_list[-1])) * h_list**2,\
-        'g--', label='erwartetes Verhalten: $O(h^2)$')
+ax.plot(h_list, abs(fprime(Global_X_0) - central(f, Global_X_0, h_list[-1])) *\
+        h_list**2, 'g--', label='erwartetes Verhalten: $O(h^2)$')
     # Plotten des Fehlers der Zentralmethode und des erwarteten Verhaltens.
     # Anpassen des Achsenabschnitts wie oben.
 
-ax.plot(h_list, error_extrapolate, 'b', label='Extrapolierte Differenz')
-ax.plot(h_list, abs(fprime(X_0) - extrapolate(f, X_0, h_list[-1])) *\
+ax.plot(h_list, error_extrapl, 'b', label='Extrapolierte Differenz')
+ax.plot(h_list, abs(fprime(Global_X_0) - extrapl(f, Global_X_0, h_list[-1])) *\
         h_list**4, 'b--', label='erwartetes Verhalten: $O(h^4)$')
     # Plotten des Fehlers der extrapolierten Differenzenmethode und des
     # erwarteten Verhaltens.
@@ -115,31 +118,34 @@ Beobachtung
 
 Wenn man die Intervallbreite h immer kleiner waehlt wird das Ableitungsergebnis
 nur bis zu einem bestimmten Punkt besser, naemlich genau bis zum Gleichgewicht
-zwischen Diskretisierungs- und Rundungsfehler. Am Beispiel der Vorwaerts-
-differenz ist das ungefaehr bei h = 10^-8 der Fall. Macht man h darueber hinaus
-noch kleiner passiert folgendes: Da h als Gleitkommazahl (float) mit 52 nur
-eine begrenzte Anzahl von Bits fuer seine Mantisse zur Verfuegung hat, wird bei
-allzu grossem Abstand von kleinster und groesster Dezimalstelle das Ende
-abgeschnitten. Dadurch kommt es dazu, dass der Fehler durch dieses Abschneiden
-groesser wird als der durch die Groesse von h, was auch immer weiter zunimmt,
-wenn h kleiner wird. Das gleiche Verhalten ist auch bei den anderen Methoden zu
-sehen, durch die geringere Gewichtung von h tritt dies jedoch erst spaeter auf.
+zwischen Diskretisierungs- und Rundungsfehler (keiner der beiden ueberwiegt).
+Am Beispiel der Vorwaertsdifferenz ist das ungefaehr bei h = 10^-8 der Fall.
+Macht man h darueber hinaus noch kleiner passiert folgendes: Da h als
+Gleitkommazahl (float) mit 52 nur eine begrenzte Anzahl von Bits fuer seine
+Mantisse zur Verfuegung hat, wird bei allzu grossem Abstand von kleinster und
+groesster Dezimalstelle das Ende abgeschnitten. Dadurch kommt es dazu, dass der
+Fehler durch dieses Abschneiden groesser wird als der durch die Groesse von h,
+was auch immer weiter zunimmt, wenn h kleiner wird. Das gleiche Verhalten ist
+auch bei den anderen Methoden zu sehen, durch die geringere Gewichtung von h
+tritt dies jedoch schon eher auf.
 
 Die optimale Wahl fuer h fuer die Vorwaertsmethode liegt daher im Bereich um
 10^-8. Der daraus resultierende minimale Fehler liegt dann ebenfalls in dem
-Bereich um 1.4*10^-8. Etwas besser ist die Zentraldifferenzenmethode, wo
-der kleinste Fehler von 6*10-12 bei einem h um 10^-5 liegt. Als beste unter den
+Bereich um 8*10^-9. Etwas besser ist die Zentraldifferenzenmethode, wo
+der kleinste Fehler von 1*10-11 bei einem h um 10^-5 liegt. Als beste unter den
 untersuchten Methoden erwies sich Methode der extrapolierten Differenz, welche
-ihren kleinsten Fehler von 1.3*10-13 bei einem h von 0.0019 hat.
+ihren kleinsten Fehler von 7*10-14 bei einem h von 0.0019 hat.
 (Bei allen Methoden gibt es zwar noch geringere Fehler, diese liegen aber schon
 im irregulaeren Bereich des ueberwiegenden Rundungsfehlers. Dieser ist aber
 unkontrollierbar, da er von der Funktion und der zu untersuchenden Stelle
-abhaengt, was man sehen kann, wenn man z.B. X_0 auf 1.0 aendert)
+abhaengt, was man sehen kann, wenn man z.B. X_0 auf 1.0 aendert. Daher habe ich
+die Fehler durch Ablesen herausgefunden und nicht den Weg ueber np.min() und
+np.argmin() gewaehlt.)
 
 Bei allen Methoden bewegt sich der Rundungsfehler ab einem gewissen Wert fuer
 h in dem gleichen 'Kanal', da irgendwann bei der Zahl die Stellen gleich
 weit auseinander sind um abgeschnitten zu werden. Dies tritt durch die
-Wichtunf bei der extrapolierten Methode frueher ein und bei der Vorwaerts-
+Wichtung bei der extrapolierten Methode frueher ein und bei der Vorwaerts-
 methode als letztes.
 
 Auch interessant ist, dass fuer sehr grosse h in Abhaengigkeit von X_0 noch
