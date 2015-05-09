@@ -61,19 +61,10 @@ h_list = (np.logspace(-10.0, 0.0, number))
     # Anlegen eines arrrays von 1^(-10) bis 1 in gleichmaessig logarithmischen
     # Intervallen
 
-error_forward = np.zeros(number)
-error_central = np.zeros(number)
-error_extrapl = np.zeros(number)
-    # Anlegen der leeren Listen fuer die Fehler der DIfferentiationsverfahren
-    # ion Abhaengigkeit der Intervallbreite h
 
-for z in range(number):
-    error_forward[z] = abs((fprime(Global_X_0) -\
-                       forward(f, Global_X_0, h_list[z])) / fprime(Global_X_0))
-    error_central[z] = abs((fprime(Global_X_0) -\
-                       central(f, Global_X_0, h_list[z])) / fprime(Global_X_0))
-    error_extrapl[z] = abs((fprime(Global_X_0) -\
-                       extrapl(f, Global_X_0, h_list[z])) / fprime(Global_X_0))
+error_forward = abs((fprime(Global_X_0) - forward(f, Global_X_0, h_list)) / fprime(Global_X_0))
+error_central = abs((fprime(Global_X_0) - central(f, Global_X_0, h_list)) / fprime(Global_X_0))
+error_extrapl = abs((fprime(Global_X_0) -extrapl(f, Global_X_0, h_list)) / fprime(Global_X_0))
     # Befuellen der Fehlerlisten mit dem Betrag des relativen Fehlers der
     # numerischen Methode zum analytisch exakten Ergebnis an der Stelle 1/3
 
