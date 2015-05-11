@@ -4,7 +4,8 @@ Aufgabe 2.1
 Dieses Programm dient dem Kennenlernen elementarer numerischer Integrations-
 methoden: der Mittelpunktsmethode, der Trapezmethode und der Simpson-Methode.
 Zudem sollen die numerischen Fehler ebenjener Methoden in Abhaengigkeit von der
-Intervallbreite der Integration dargestellt werden.
+Intervallbreite der bestimmten Integration dargestellt werden. Testobjekte
+werden drei verschieden gutartig zu integrierende Funktionen sein.
 """
 
 from __future__ import division
@@ -25,9 +26,9 @@ def fb(x):
     """
     Gegebene Funktion aus Aufgabenstellung b)
     """
-    return np.exp(-100 * x**2)
+    return np.exp(-100 * (x**2))
 # Genaeherte Loesung des bestimmten Integrals aus b)
-Intb = 0.177245
+Intb = 0.177245385090
 
 
 def fc(x):
@@ -71,6 +72,9 @@ def simpson(func, a, b, n):
     f_i = (func(x[:-1]) + func(x[1:]))/2        # einmal halbe und ganze Breite
     f_j = (func(x[:-2:2]) + func(x[2::2]))/2    # mit entspr. Wichtung
     return 4/3 * sum(f_i) * width - 1/3 * sum(f_j) * width * 2
+
+# Minimale Benutzerfuehrung
+print __doc__
 
 # feste obere und untere Integrationsgrenze als Parameter
 A = -np.pi/2
@@ -121,3 +125,62 @@ ax.set_ylabel(r"$\frac{\Delta I}{I}$", fontsize=18)
 ax.set_title('Numerische Integration', fontsize=20)
 
 plt.show()
+
+"""
+Beobachtung:
+
+a) Das hier gegebene bestimmte Integral war analytisch leicht zu loesen und
+lieferte ein Ergebnis von -0.25.
+Wie zu erwarten lieferte die Simpson-Methode das genaueste Ergebnis, welches
+nur einen Fehler von ~7.5e-14 bei einer Intervallbreite von 0.0018 aufwies.
+Damit ist es auch die effizienteste Methode was die Rechenzeit angeht, da
+weniger, groessere Intervalle berechnet werden muessen. Allerdings sieht man
+auch, dass die Simpson-Methode bei immer kleiner werdenden Breiten nicht
+besser wird, sondern ihr Fehler zu rauschen beginnt. Dies liegt an der
+Differenzbildung bei der Berechnung des relativen Fehlers, da die errechnete
+Differenz zu nah an der Null liegt und somit  Probleme mit der genauen
+Aufloesung das Rauschen verursachen.
+Die Mittelwertmethode waere die naechstgenauere Methode mit einem minimalen
+Fehler von ~1e-10 bei einer Intervallbreite von 2.6e-5 (im untersuchten
+Bereich!). Die Trapezmethode hat ihren kleinsten Fehler von ~2.3e-10 bei einer
+Breite von 2.6e-5. Beide letztgenannten Methoden skalieren mit h^4, waehrend
+die Simpson-Methode mit h^4 skaliert.
+Versucht man die Intervalle noch kleiner zu machen, um die minimalen Fehler der
+Trapez- und Mittelwertsmethode zu ermitteln, so gelangt man schnell zu grossen
+Rechenzeiten. In der Tat dauerte dies bei mir so lang, dass ich das Programm
+abbrach, bevor es ein Ergebnis erzielte.
+
+b) Das hier zu berechnende bestimmte Integral liess sich nicht exakt analytisch
+berechenen, daher habe ich unter Zuhilfenahme von Wolfram Alpha folgende
+genaeherte Loesung genutzt: 0.177245385090.
+Plottet man die Funktion einmal, um sie genauer zu betrachten, faellt einem
+auf, dass sie sehr steile Anstiege zu beiden Seiten der Null hat, also quasi
+fast einer Delta-Distribution entspricht.
+Damit laesst sich auch das merkwuerdige Verhalten der drei Integrationsmethoden
+erklaeren, welche sich alle einen sehr aehnlichen Verlauf in Abhaengigkeit von
+der Intervallbreite zeigen: Zunaechst weisen sie mit bis zu ~2e1 einen sehr
+grossen Fehler auf, fallen dann aber (bis zu einer Breite von 0.006) sehr
+schnell auf einen bis zum Ende konstant bleibenden Wert von 3.2e-12 ab. Der
+starke Abfall zu Beginn laesst sich mit dem starken Anstieg der Funktion
+erklaeren: eine kleine Variation aufder x-Achse verursacht eine grosse
+Verschiebung auf der y-Achse, sodass die Integrationsrechtecke und ~trapeze
+kaum etwas mit der wahren Funktion gemein haben. Hat man dann allerdings diesen
+kritischen Bereich um die Null herum genau genug genaehert, gibt es mit dem
+restlichen Definitionsbereich nur wenig Probleme, sodass der Fehler konstant
+niedrig bleibt.
+
+c) Das hier gegebene bestimmte Integral liess sich aufgrund der Eigenschaften
+der Theta-Funktion wieder relativ einfach analytisch loesen; das Ergebnis
+lautet wenig ueberraschend pi/3.
+Umso interessanter ist das Verhalten der drei Integrationsmethoden, welche sich
+auch hier alle sehr gleich verlaufen: Ihre Fehler 'springen' zwischen jeweils
+drei mit h^1 abfallenden Geraden hin und her. Dies laesst sich jedoch leicht
+durch die Unstetitigkeitsstelle an der null erklaeren, da die gewaehlten
+Intervalle immer abwechseln asymmetrisch und symmetrisch auf ihr liegen.
+
+
+Zusammenfassend muss man sagen, dass man, wenn man eine numerisch Integrations-
+methode anwendet von Funktion zu Funktion ueberpruefen muss, ob das gelieferte
+Ergebnis sinnvoll erscheint, da nicht jede Funktion so gutartig ist, wie die in
+a) gegebene.
+"""
