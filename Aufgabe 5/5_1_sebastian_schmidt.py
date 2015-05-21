@@ -59,6 +59,11 @@ def OneD_Schroedinger(v, args, l, dx, h):
 
 
 def plot_eigenfunctions(ax, scalefactor=0.01):
+    """
+    Diese Funktion plottet Eigenfunktionen in Hoehe ihrer Eigenenergien in ein
+    Potential V, welche alle aus dem Aufruf der Funktion OneD_Schroedinger()
+    gewonnen werden
+    """
     ev, ef, xi, Vi = OneD_Schroedinger(V, L, Delta_x, h_eff, A)
     ax.plot(xi, Vi, lw=3, color='k')
     ax.plot(xi, ev + scalefactor*ef)
